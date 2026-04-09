@@ -153,10 +153,7 @@ async function iniciar() {
     } else {
       await escribir("Sistema verificado correctamente...");
     }
-
-    await escribir("\nPreparando mensaje especial...");
-    await contadorHacker(10); // 10 segundos
-
+    
     // Mostrar mensaje broma
     terminal.style.display = "none";
     mensajeBroma.style.display = "block";
