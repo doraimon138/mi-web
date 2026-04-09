@@ -2,39 +2,77 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Sorpresa</title>
+  <title>Acceso detectado</title>
   <style>
     body {
       background: black;
       color: #00ff00;
       font-family: monospace;
-      text-align: center;
-      padding-top: 100px;
+      padding: 40px;
     }
-    h1 {
-      font-size: 40px;
+    #terminal {
+      white-space: pre-line;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
 
-<h1>Conectando...</h1>
-<p id="info"></p>
+<div id="terminal"></div>
 
 <script>
-fetch("https://ipapi.co/json/")
-  .then(res => res.json())
-  .then(data => {
-    document.querySelector("h1").textContent = "Te estoy viendo 👁️";
-    document.getElementById("info").innerHTML = `
-      IP: ${data.ip} <br>
-      Ciudad: ${data.city} <br>
-      País: ${data.country_name}
-    `;
-  })
-  .catch(() => {
-    document.querySelector("h1").textContent = "No pude encontrarte...";
+const terminal = document.getElementById("terminal");
+
+function escribir(texto, delay = 40) {
+  return new Promise(resolve => {
+    let i = 0;
+    const intervalo = setInterval(() => {
+      terminal.innerHTML += texto[i];
+      i++;
+      if (i >= texto.length) {
+        clearInterval(intervalo);
+        terminal.innerHTML += "\n";
+        resolve();
+      }
+    }, delay);
   });
+}
+
+async function iniciar() {
+  await escribir("Iniciando sistema...");
+  await escribir("Conectando con servidor...");
+  await escribir("Accediendo a datos del usuario...\n");
+
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    await escribir("IP detectada: " + data.ip);
+    await escribir("Ubicación: " + data.city + ", " + data.country_name);
+    await escribir("Proveedor: " + data.org + "\n");
+
+    // detección básica de VPN
+    if (data.org && (
+      data.org.includes("VPN") ||
+      data.org.includes("Cloud") ||
+      data.org.includes("Hosting") ||
+      data.org.includes("Server")
+    )) {
+      await escribir("⚠️ ACTIVIDAD SOSPECHOSA DETECTADA");
+      await escribir("Posible uso de VPN...");
+      await escribir("Intentando rastrear IP real...\n");
+      await escribir("❌ Acceso restringido");
+    } else {
+      await escribir("Conexión segura verificada");
+    }
+
+    await escribir("\nIntentar ocultarte no sirve...");
+  } catch {
+    await escribir("Error al obtener datos...");
+  }
+}
+
+iniciar();
 </script>
 
 </body>
