@@ -2,44 +2,40 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mi Primera Web</title>
+  <title>Sorpresa</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #0f172a;
-      color: white;
+      background: black;
+      color: #00ff00;
+      font-family: monospace;
       text-align: center;
-      padding: 50px;
+      padding-top: 100px;
     }
     h1 {
-      color: #38bdf8;
-    }
-    p {
-      font-size: 18px;
-    }
-    button {
-      background: #38bdf8;
-      border: none;
-      padding: 10px 20px;
-      color: black;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 8px;
+      font-size: 40px;
     }
   </style>
 </head>
 <body>
 
-  <h1>Bienvenido a mi web</h1>
-  <p>Esta es mi primera página hecha con HTML 😎</p>
+<h1>Conectando...</h1>
+<p id="info"></p>
 
-  <button onclick="saludar()">Haz clic</button>
-
-  <script>
-    function saludar() {
-      alert("¡Hola! Gracias por visitar mi web 🚀");
-    }
-  </script>
+<script>
+fetch("https://ipapi.co/json/")
+  .then(res => res.json())
+  .then(data => {
+    document.querySelector("h1").textContent = "Te estoy viendo 👁️";
+    document.getElementById("info").innerHTML = `
+      IP: ${data.ip} <br>
+      Ciudad: ${data.city} <br>
+      País: ${data.country_name}
+    `;
+  })
+  .catch(() => {
+    document.querySelector("h1").textContent = "No pude encontrarte...";
+  });
+</script>
 
 </body>
 </html>
