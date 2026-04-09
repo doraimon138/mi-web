@@ -105,7 +105,8 @@ function escribir(texto, delay = 35) {
   });
 }
 
-async function contadorAmor(segundos) {
+async function contadorHacker(segundos) {
+  terminal.innerHTML += "Este dispositivo se autodestruirá en...\n";
   for (let i = segundos; i > 0; i--) {
     terminal.innerHTML += `NO SALGAS: ${i}\n`;
     sonido();
@@ -154,7 +155,7 @@ async function iniciar() {
     }
 
     await escribir("\nPreparando mensaje especial...");
-    await contadorAmor(15);
+    await contadorHacker(10); // 10 segundos
 
     // Mostrar mensaje broma
     terminal.style.display = "none";
