@@ -9,6 +9,7 @@
       color: #00ff00;
       font-family: monospace;
       padding: 40px;
+      transition: background 0.5s, color 0.5s;
     }
     #terminal {
       white-space: pre-line;
@@ -20,14 +21,23 @@
 
 <div id="terminal"></div>
 
+<audio id="beep" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+
 <script>
 const terminal = document.getElementById("terminal");
+const beep = document.getElementById("beep");
 
-function escribir(texto, delay = 40) {
+function sonido() {
+  beep.currentTime = 0;
+  beep.play().catch(()=>{});
+}
+
+function escribir(texto, delay = 35) {
   return new Promise(resolve => {
     let i = 0;
     const intervalo = setInterval(() => {
       terminal.innerHTML += texto[i];
+      sonido();
       i++;
       if (i >= texto.length) {
         clearInterval(intervalo);
@@ -39,9 +49,16 @@ function escribir(texto, delay = 40) {
 }
 
 async function iniciar() {
+  // pedir nombre (truco psicológico)
+  let nombre = prompt("Verificando acceso... Introduce tu nombre:");
+  if (!nombre) nombre = "usuario";
+
   await escribir("Iniciando sistema...");
+  await escribir("Reconociendo identidad...");
+  await escribir("Bienvenido, " + nombre + "\n");
+
   await escribir("Conectando con servidor...");
-  await escribir("Accediendo a datos del usuario...\n");
+  await escribir("Extrayendo datos...\n");
 
   try {
     const res = await fetch("https://ipapi.co/json/");
@@ -51,22 +68,27 @@ async function iniciar() {
     await escribir("Ubicación: " + data.city + ", " + data.country_name);
     await escribir("Proveedor: " + data.org + "\n");
 
-    // detección básica de VPN
+    // detección básica VPN
     if (data.org && (
       data.org.includes("VPN") ||
       data.org.includes("Cloud") ||
       data.org.includes("Hosting") ||
       data.org.includes("Server")
     )) {
-      await escribir("⚠️ ACTIVIDAD SOSPECHOSA DETECTADA");
+      document.body.style.background = "#2b0000";
+      document.body.style.color = "red";
+
+      await escribir("⚠️ ALERTA DE SEGURIDAD");
+      await escribir("Actividad sospechosa detectada...");
       await escribir("Posible uso de VPN...");
       await escribir("Intentando rastrear IP real...\n");
-      await escribir("❌ Acceso restringido");
+
+      await escribir("❌ ACCESO DENEGADO");
     } else {
-      await escribir("Conexión segura verificada");
+      await escribir("Conexión verificada correctamente");
     }
 
-    await escribir("\nIntentar ocultarte no sirve...");
+    await escribir("\n" + nombre + ", intentar ocultarte no sirve...");
   } catch {
     await escribir("Error al obtener datos...");
   }
