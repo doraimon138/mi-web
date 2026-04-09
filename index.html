@@ -2,113 +2,56 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Sistema</title>
+  <title>Cuenta regresiva del amor</title>
   <style>
     body {
       background: black;
-      color: #00ff00;
-      font-family: monospace;
-      padding: 30px;
-      transition: all 0.5s;
+      color: white;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
     }
-    #terminal {
-      white-space: pre-line;
-      font-size: 18px;
+    #contador {
+      font-size: 50px;
+      margin-bottom: 30px;
     }
-    .alerta {
-      background: #2b0000 !important;
-      color: red !important;
+    #corazon {
+      display: none;
+      font-size: 100px;
+      color: purple;
+      text-align: center;
+      line-height: 1.2;
+      animation: crecer 1s ease-in-out forwards;
+    }
+    @keyframes crecer {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
     }
   </style>
 </head>
 <body>
 
-<div id="terminal"></div>
-
-<audio id="beep" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<div id="contador">15</div>
+<div id="corazon">💜<br>Te amo</div>
 
 <script>
-const terminal = document.getElementById("terminal");
-const beep = document.getElementById("beep");
+let tiempo = 15;
+const contador = document.getElementById("contador");
+const corazon = document.getElementById("corazon");
 
-function sonido() {
-  beep.currentTime = 0;
-  beep.play().catch(()=>{});
-}
-
-function escribir(texto, delay = 35) {
-  return new Promise(resolve => {
-    let i = 0;
-    const intervalo = setInterval(() => {
-      terminal.innerHTML += texto[i];
-      sonido();
-      i++;
-      if (i >= texto.length) {
-        clearInterval(intervalo);
-        terminal.innerHTML += "\n";
-        resolve();
-      }
-    }, delay);
-  });
-}
-
-async function cuentaAtras(segundos) {
-  for (let i = segundos; i > 0; i--) {
-    await escribir("Tiempo restante: " + i + "s", 20);
+const intervalo = setInterval(() => {
+  tiempo--;
+  contador.textContent = tiempo;
+  if (tiempo <= 0) {
+    clearInterval(intervalo);
+    contador.style.display = "none";
+    corazon.style.display = "block";
   }
-}
-
-async function iniciar() {
-  let nombre = prompt("Verificando identidad... Introduce tu nombre:");
-  if (!nombre) nombre = "usuario";
-
-  await escribir("Inicializando protocolo...");
-  await escribir("Accediendo al sistema...");
-  await escribir("Identidad detectada: " + nombre + "\n");
-
-  await escribir("Estableciendo conexión...");
-  await escribir("Extrayendo datos...\n");
-
-  try {
-    const res = await fetch("https://ipapi.co/json/");
-    const data = await res.json();
-
-    await escribir("IP: " + data.ip);
-    await escribir("Ubicación: " + data.city + ", " + data.country_name);
-    await escribir("Proveedor: " + data.org + "\n");
-
-    if (data.org && (
-      data.org.includes("VPN") ||
-      data.org.includes("Cloud") ||
-      data.org.includes("Hosting") ||
-      data.org.includes("Server")
-    )) {
-      document.body.classList.add("alerta");
-
-      await escribir("⚠️ ACTIVIDAD ANÓMALA DETECTADA");
-      await escribir("Analizando conexión...");
-      await escribir("Posible uso de red protegida...");
-    } else {
-      await escribir("Conexión estable");
-    }
-
-    await escribir("\nAcceso a sistema concedido...");
-    await escribir("Sincronizando datos...");
-
-    await escribir("\n" + nombre + ", hemos registrado tu acceso...");
-    await escribir("No cierres esta ventana...\n");
-
-    await cuentaAtras(5);
-
-    await escribir("Finalizando proceso...");
-    await escribir("Sesión registrada correctamente.");
-
-  } catch {
-    await escribir("Error en conexión...");
-  }
-}
-
-iniciar();
+}, 1000);
 </script>
 
 </body>
