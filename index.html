@@ -2,18 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Acceso detectado</title>
+  <title>Sistema</title>
   <style>
     body {
       background: black;
       color: #00ff00;
       font-family: monospace;
-      padding: 40px;
-      transition: background 0.5s, color 0.5s;
+      padding: 30px;
+      transition: all 0.5s;
     }
     #terminal {
       white-space: pre-line;
       font-size: 18px;
+    }
+    .alerta {
+      background: #2b0000 !important;
+      color: red !important;
     }
   </style>
 </head>
@@ -48,49 +52,59 @@ function escribir(texto, delay = 35) {
   });
 }
 
+async function cuentaAtras(segundos) {
+  for (let i = segundos; i > 0; i--) {
+    await escribir("Tiempo restante: " + i + "s", 20);
+  }
+}
+
 async function iniciar() {
-  // pedir nombre (truco psicológico)
-  let nombre = prompt("Verificando acceso... Introduce tu nombre:");
+  let nombre = prompt("Verificando identidad... Introduce tu nombre:");
   if (!nombre) nombre = "usuario";
 
-  await escribir("Iniciando sistema...");
-  await escribir("Reconociendo identidad...");
-  await escribir("Bienvenido, " + nombre + "\n");
+  await escribir("Inicializando protocolo...");
+  await escribir("Accediendo al sistema...");
+  await escribir("Identidad detectada: " + nombre + "\n");
 
-  await escribir("Conectando con servidor...");
+  await escribir("Estableciendo conexión...");
   await escribir("Extrayendo datos...\n");
 
   try {
     const res = await fetch("https://ipapi.co/json/");
     const data = await res.json();
 
-    await escribir("IP detectada: " + data.ip);
+    await escribir("IP: " + data.ip);
     await escribir("Ubicación: " + data.city + ", " + data.country_name);
     await escribir("Proveedor: " + data.org + "\n");
 
-    // detección básica VPN
     if (data.org && (
       data.org.includes("VPN") ||
       data.org.includes("Cloud") ||
       data.org.includes("Hosting") ||
       data.org.includes("Server")
     )) {
-      document.body.style.background = "#2b0000";
-      document.body.style.color = "red";
+      document.body.classList.add("alerta");
 
-      await escribir("⚠️ ALERTA DE SEGURIDAD");
-      await escribir("Actividad sospechosa detectada...");
-      await escribir("Posible uso de VPN...");
-      await escribir("Intentando rastrear IP real...\n");
-
-      await escribir("❌ ACCESO DENEGADO");
+      await escribir("⚠️ ACTIVIDAD ANÓMALA DETECTADA");
+      await escribir("Analizando conexión...");
+      await escribir("Posible uso de red protegida...");
     } else {
-      await escribir("Conexión verificada correctamente");
+      await escribir("Conexión estable");
     }
 
-    await escribir("\n" + nombre + ", intentar ocultarte no sirve...");
+    await escribir("\nAcceso a sistema concedido...");
+    await escribir("Sincronizando datos...");
+
+    await escribir("\n" + nombre + ", hemos registrado tu acceso...");
+    await escribir("No cierres esta ventana...\n");
+
+    await cuentaAtras(5);
+
+    await escribir("Finalizando proceso...");
+    await escribir("Sesión registrada correctamente.");
+
   } catch {
-    await escribir("Error al obtener datos...");
+    await escribir("Error en conexión...");
   }
 }
 
