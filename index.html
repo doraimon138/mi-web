@@ -153,6 +153,197 @@ async function iniciar() {
     } else {
       await escribir("Sistema verificado correctamente...");
     }
+
+    // Contador hacker de 10 segundos
+    await contadorHacker(10);
+
+    // Mostrar mensaje broma
+    terminal.style.display = "none";
+    mensajeBroma.style.display = "block";
+
+    // Después de 3 segundos mostrar corazón
+    setTimeout(() => {
+      mensajeBroma.style.display = "none";
+      corazon.style.display = "block";
+      crearParticulas(30);
+
+      // Después de 2 segundos mostrar video
+      setTimeout(() => {
+        corazon.style.display = "none";
+        videoContainer.style.display = "block";
+        videoContainer.innerHTML = `
+          <iframe width="100%" height="100%" src="https://www.youtube.com/embed/vuXIgfU8GDc?autoplay=1" 
+          title="Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+          </iframe>
+        `;
+      }, 2000);
+
+    }, 3000);
+
+  } catch {
+    await escribir("Error al obtener datos...");
+  }
+}
+
+iniciar();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Amor</title>
+<style>
+  body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    transition: all 0.5s;
+  }
+  #terminal {
+    white-space: pre-line;
+    font-size: 18px;
+    z-index: 1;
+  }
+  #mensaje-broma {
+    display: none;
+    font-size: 24px;
+    color: #ff69b4;
+    text-align: center;
+    margin-top: 20px;
+  }
+  #corazon {
+    display: none;
+    font-size: 100px;
+    color: purple;
+    text-align: center;
+    line-height: 1.2;
+    animation: latido 1s infinite;
+    position: relative;
+    z-index: 2;
+  }
+  @keyframes latido {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+  .particula {
+    position: absolute;
+    color: #d7b2ff;
+    font-size: 20px;
+    pointer-events: none;
+    user-select: none;
+    animation: brillar 2s linear infinite;
+  }
+  @keyframes brillar {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    50% { opacity: 0.5; transform: translate(-10px,-20px) scale(1.2); }
+    100% { opacity: 1; transform: translate(10px,20px) scale(1); }
+  }
+  #video-container {
+    display: none;
+    position: absolute;
+    top:0; left:0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+  }
+</style>
+</head>
+<body>
+
+<div id="terminal"></div>
+<div id="mensaje-broma">¿Te asustaste? jaja es broma princesa</div>
+<div id="corazon">💜<br>Te amo</div>
+<audio id="beep" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<div id="video-container"></div>
+
+<script>
+const terminal = document.getElementById("terminal");
+const beep = document.getElementById("beep");
+const corazon = document.getElementById("corazon");
+const videoContainer = document.getElementById("video-container");
+const mensajeBroma = document.getElementById("mensaje-broma");
+
+function sonido() {
+  beep.currentTime = 0;
+  beep.play().catch(()=>{});
+}
+
+function escribir(texto, delay = 35) {
+  return new Promise(resolve => {
+    let i = 0;
+    const intervalo = setInterval(() => {
+      terminal.innerHTML += texto[i];
+      sonido();
+      i++;
+      if (i >= texto.length) {
+        clearInterval(intervalo);
+        terminal.innerHTML += "\n";
+        resolve();
+      }
+    }, delay);
+  });
+}
+
+async function contadorHacker(segundos) {
+  terminal.innerHTML += "Este dispositivo se autodestruirá en...\n";
+  for (let i = segundos; i > 0; i--) {
+    terminal.innerHTML += `NO SALGAS: ${i}\n`;
+    sonido();
+    await new Promise(r => setTimeout(r, 1000));
+  }
+}
+
+function crearParticulas(cantidad) {
+  for (let i = 0; i < cantidad; i++) {
+    const p = document.createElement("div");
+    p.className = "particula";
+    p.style.left = Math.random() * window.innerWidth + "px";
+    p.style.top = Math.random() * window.innerHeight + "px";
+    p.style.fontSize = 10 + Math.random() * 20 + "px";
+    document.body.appendChild(p);
+    setInterval(() => {
+      p.style.left = Math.random() * window.innerWidth + "px";
+      p.style.top = Math.random() * window.innerHeight + "px";
+    }, 2000 + Math.random() * 2000);
+  }
+}
+
+async function iniciar() {
+  let nombre = prompt("Verificando identidad... Introduce tu nombre:");
+  if (!nombre) nombre = "usuario";
+
+  await escribir("Inicializando protocolo secreto...");
+  await escribir("Reconociendo identidad: " + nombre);
+  await escribir("Conexión establecida...\n");
+  await escribir("Analizando IP y sistema...\n");
+
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    await escribir("IP detectada: " + data.ip);
+    await escribir("Ciudad: " + data.city);
+    await escribir("Proveedor: " + data.org + "\n");
+
+    if (data.org && (data.org.includes("VPN") || data.org.includes("Cloud") || data.org.includes("Hosting") || data.org.includes("Server"))) {
+      document.body.style.background = "#2b0000";
+      document.body.style.color = "red";
+      await escribir("⚠️ ALERTA DE SEGURIDAD: Posible VPN detectada...");
+    } else {
+      await escribir("Sistema verificado correctamente...");
+    }
     
     // Mostrar mensaje broma
     terminal.style.display = "none";
