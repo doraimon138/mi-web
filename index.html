@@ -1,58 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Cuenta regresiva del amor</title>
-  <style>
-    body {
-      background: black;
-      color: white;
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
-    #contador {
-      font-size: 50px;
-      margin-bottom: 30px;
-    }
-    #corazon {
-      display: none;
-      font-size: 100px;
-      color: purple;
-      text-align: center;
-      line-height: 1.2;
-      animation: crecer 1s ease-in-out forwards;
-    }
-    @keyframes crecer {
-      0% { transform: scale(0); }
-      100% { transform: scale(1); }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Sistema Amor</title>
+<style>
+  body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    padding: 30px;
+    transition: all 0.5s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+  }
+  #terminal {
+    white-space: pre-line;
+    font-size: 18px;
+  }
+  #corazon {
+    display: none;
+    font-size: 100px;
+    color: purple;
+    text-align: center;
+    line-height: 1.2;
+    animation: crecer 1s ease-in-out forwards;
+  }
+  @keyframes crecer {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+</style>
 </head>
 <body>
 
-<div id="contador">15</div>
+<div id="terminal"></div>
 <div id="corazon">💜<br>Te amo</div>
+<audio id="beep" src="https://www.soundjay.com/button/beep-07.wav"></audio>
 
 <script>
-let tiempo = 15;
-const contador = document.getElementById("contador");
-const corazon = document.getElementById("corazon");
+const terminal = document.getElementById("terminal");
+const beep = document.getElementById("beep");
 
-const intervalo = setInterval(() => {
-  tiempo--;
-  contador.textContent = tiempo;
-  if (tiempo <= 0) {
-    clearInterval(intervalo);
-    contador.style.display = "none";
-    corazon.style.display = "block";
+function sonido() {
+  beep.currentTime = 0;
+  beep.play().catch(()=>{});
+}
+
+function escribir(texto, delay = 35) {
+  return new Promise(resolve => {
+    let i = 0;
+    const intervalo = setInterval(() => {
+      terminal.innerHTML += texto[i];
+      sonido();
+      i++;
+      if (i >= texto.length) {
+        clearInterval(intervalo);
+        terminal.innerHTML += "\n";
+        resolve();
+      }
+    }, delay);
+  });
+}
+
+async function contadorAmor(segundos) {
+  for (let i = segundos; i > 0; i--) {
+    terminal.innerHTML += `NO SALGAS: ${i}\n`;
+    sonido();
+    await new Promise(r => setTimeout(r, 1000));
   }
-}, 1000);
-</script>
+}
 
+async function iniciar() {
+  let nombre = prompt("Verificando identidad... Introduce tu nombre:");
+  if (!nombre) nombre = "usuario";
+
+  await escribir("Inicializando protocolo secreto...");
+  await escribir("Reconociendo identidad: " + nombre);
+  await escribir("Conexión establecida...\n");
+
+  await escribir("Analizando IP y sistema...\n");
+
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    await escribir("IP detectada: " + data.ip);
+    await escribir("Ciudad: " + data.city);
+    await escribir("Proveedor: " + data.org + "\n");
+
+    if (data.org && (data.org.includes("VPN") || data.org.includes("Cloud") || data.org.includes("Hosting") || data.org.includes("Server"))) {
+      document.body.style.background = "#2b0000";
+      document.body.style.color = "red";
+      await escribir("⚠️ ALERTA DE SEGURIDAD: Posible VPN detectada...");
+    } else {
+      await escribir("Sistema verificado correctamente...");
+    }
+
+    await escribir("\nPreparando mensaje especial...");
+    await contadorAmor(15);
+
+    // Muestra el corazón
+    terminal.style.display = "none";
+    document.getElementById("corazon").style.display = "block";
+
+  } catch {
+    await escribir("Error al obtener datos...");
+  }
+}
+
+iniciar();
+</script>
 </body>
 </html>
