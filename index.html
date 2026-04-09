@@ -9,16 +9,18 @@
     color: #00ff00;
     font-family: monospace;
     padding: 30px;
-    transition: all 0.5s;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100vh;
+    overflow: hidden;
+    transition: all 0.5s;
   }
   #terminal {
     white-space: pre-line;
     font-size: 18px;
+    z-index: 1;
   }
   #corazon {
     display: none;
@@ -26,11 +28,29 @@
     color: purple;
     text-align: center;
     line-height: 1.2;
-    animation: crecer 1s ease-in-out forwards;
+    animation: latido 1s infinite;
+    position: relative;
+    z-index: 2;
   }
-  @keyframes crecer {
-    0% { transform: scale(0); }
+  @keyframes latido {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.2); }
+    50% { transform: scale(1); }
+    75% { transform: scale(1.2); }
     100% { transform: scale(1); }
+  }
+  .particula {
+    position: absolute;
+    color: #d7b2ff;
+    font-size: 20px;
+    pointer-events: none;
+    user-select: none;
+    animation: brillar 2s linear infinite;
+  }
+  @keyframes brillar {
+    0% { opacity: 1; transform: translate(0,0) scale(1); }
+    50% { opacity: 0.5; transform: translate(-10px,-20px) scale(1.2); }
+    100% { opacity: 1; transform: translate(10px,20px) scale(1); }
   }
 </style>
 </head>
@@ -73,6 +93,23 @@ async function contadorAmor(segundos) {
   }
 }
 
+function crearParticulas(cantidad) {
+  for (let i = 0; i < cantidad; i++) {
+    const p = document.createElement("div");
+    p.className = "particula";
+    p.style.left = Math.random() * window.innerWidth + "px";
+    p.style.top = Math.random() * window.innerHeight + "px";
+    p.style.fontSize = 10 + Math.random() * 20 + "px";
+    document.body.appendChild(p);
+
+    // animar posición
+    setInterval(() => {
+      p.style.left = Math.random() * window.innerWidth + "px";
+      p.style.top = Math.random() * window.innerHeight + "px";
+    }, 2000 + Math.random() * 2000);
+  }
+}
+
 async function iniciar() {
   let nombre = prompt("Verificando identidad... Introduce tu nombre:");
   if (!nombre) nombre = "usuario";
@@ -104,7 +141,9 @@ async function iniciar() {
 
     // Muestra el corazón
     terminal.style.display = "none";
-    document.getElementById("corazon").style.display = "block";
+    const corazon = document.getElementById("corazon");
+    corazon.style.display = "block";
+    crearParticulas(30);
 
   } catch {
     await escribir("Error al obtener datos...");
@@ -113,5 +152,6 @@ async function iniciar() {
 
 iniciar();
 </script>
+
 </body>
 </html>
