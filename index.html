@@ -15,77 +15,48 @@
     justify-content: center;
     height: 100vh;
     overflow: hidden;
-    transition: all 0.5s;
   }
 
   #terminal {
     white-space: pre-line;
-    font-size: 18px;
+    font-size: 20px;
+    text-align: center;
   }
 
-  #mensaje-broma {
+  #mensaje {
     display: none;
-    font-size: 24px;
+    font-size: 28px;
     color: #ff69b4;
-    text-align: center;
     margin-top: 20px;
   }
 
-  @keyframes latido {
-    0% { transform: scale(1); }
-    25% { transform: scale(1.2); }
-    50% { transform: scale(1); }
-    75% { transform: scale(1.2); }
-    100% { transform: scale(1); }
+  #contador {
+    font-size: 32px;
+    margin-bottom: 20px;
   }
 </style>
 </head>
 
 <body>
 
-<div id="terminal"></div>
-<div id="mensaje-broma">jajaja que tonta eres</div>
-
-<audio id="beep" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+<div id="contador"></div>
+<div id="mensaje">jajaja que tonta eres</div>
 
 <script>
-const terminal = document.getElementById("terminal");
-const beep = document.getElementById("beep");
-const mensajeBroma = document.getElementById("mensaje-broma");
-
-function sonido() {
-  beep.currentTime = 0;
-  beep.play().catch(()=>{});
-}
-
-function escribir(texto, delay = 35) {
-  return new Promise(resolve => {
-    let i = 0;
-    const intervalo = setInterval(() => {
-      terminal.innerHTML += texto[i];
-      sonido();
-      i++;
-      if (i >= texto.length) {
-        clearInterval(intervalo);
-        terminal.innerHTML += "\n";
-        resolve();
-      }
-    }, delay);
-  });
-}
+const contador = document.getElementById("contador");
+const mensaje = document.getElementById("mensaje");
 
 async function iniciar() {
-  let nombre = prompt("Verificando identidad... Introduce tu nombre:");
-  if (!nombre) nombre = "usuario";
+  let tiempo = 10;
 
-  await escribir("Inicializando protocolo secreto...");
-  await escribir("Reconociendo identidad: " + nombre);
-  await escribir("Conexión establecida...");
-  await escribir("Analizando sistema...");
+  while (tiempo > 0) {
+    contador.innerHTML = "Cuenta atrás: " + tiempo;
+    await new Promise(r => setTimeout(r, 1000));
+    tiempo--;
+  }
 
-  // mensaje final
-  terminal.style.display = "none";
-  mensajeBroma.style.display = "block";
+  contador.style.display = "none";
+  mensaje.style.display = "block";
 }
 
 iniciar();
