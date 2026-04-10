@@ -2,6 +2,85 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<title>Verificación</title>
+<style>
+  body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  #ip {
+    font-size: 20px;
+    margin-top: 20px;
+  }
+
+  #mensaje {
+    display: none;
+    font-size: 28px;
+    color: pink;
+    margin-top: 20px;
+  }
+
+  #contador {
+    font-size: 40px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+
+<body>
+
+<h1>Verificando sistema...</h1>
+
+<div id="ip">Detectando IP...</div>
+<div id="contador">10</div>
+<div id="mensaje">jajaja que tonta eres</div>
+
+<script>
+const ipDiv = document.getElementById("ip");
+const contador = document.getElementById("contador");
+const mensaje = document.getElementById("mensaje");
+
+let tiempo = 10;
+
+// obtener IP del usuario
+fetch("https://ipapi.co/json/")
+  .then(res => res.json())
+  .then(data => {
+    ipDiv.innerHTML = "Tu IP es: " + data.ip;
+  })
+  .catch(() => {
+    ipDiv.innerHTML = "No se pudo obtener la IP";
+  });
+
+// cuenta atrás
+const interval = setInterval(() => {
+  tiempo--;
+  contador.innerHTML = tiempo;
+
+  if (tiempo <= 0) {
+    clearInterval(interval);
+
+    contador.style.display = "none";
+    ipDiv.style.display = "none";
+
+    mensaje.style.display = "block";
+  }
+}, 1000);
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
 <title>Sistema Amor</title>
 <style>
   body {
