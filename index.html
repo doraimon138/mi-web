@@ -2,6 +2,124 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<title>Terminal</title>
+
+<style>
+  body {
+    background: black;
+    color: #00ff00;
+    font-family: monospace;
+    padding: 30px;
+    overflow: hidden;
+  }
+
+  #terminal {
+    white-space: pre-line;
+    font-size: 18px;
+  }
+
+  #contador {
+    font-size: 40px;
+    margin-top: 20px;
+    color: red;
+  }
+
+  #final {
+    display: none;
+    font-size: 28px;
+    color: pink;
+    margin-top: 30px;
+  }
+
+  .blink {
+    animation: blink 0.8s infinite;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+</style>
+
+</head>
+
+<body>
+
+<div id="terminal"></div>
+<div id="ip"></div>
+<div id="contador"></div>
+<div id="final">es broma mi niña te quiero 💜</div>
+
+<script>
+const terminal = document.getElementById("terminal");
+const ipDiv = document.getElementById("ip");
+const contadorDiv = document.getElementById("contador");
+const finalDiv = document.getElementById("final");
+
+function escribir(texto, delay = 40) {
+  return new Promise(resolve => {
+    let i = 0;
+    const interval = setInterval(() => {
+      terminal.innerHTML += texto[i];
+      i++;
+      if (i >= texto.length) {
+        clearInterval(interval);
+        terminal.innerHTML += "\n";
+        resolve();
+      }
+    }, delay);
+  });
+}
+
+async function iniciar() {
+
+  await escribir("Iniciando sistema...");
+  await escribir("Conectando con servidor seguro...");
+  await escribir("Accediendo a núcleo del sistema...");
+  await escribir("Analizando dispositivo...");
+  
+  // IP
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+
+    ipDiv.innerHTML = "IP detectada: " + data.ip;
+
+    await escribir("Ubicación registrada: " + data.city);
+    await escribir("Proveedor: " + data.org);
+  } catch {
+    await escribir("No se pudo obtener la IP...");
+  }
+
+  await escribir("\nEste dispositivo se autodestruirá en...");
+
+  // cuenta atrás
+  let tiempo = 10;
+  contadorDiv.innerHTML = tiempo;
+
+  const interval = setInterval(() => {
+    tiempo--;
+    contadorDiv.innerHTML = tiempo;
+
+    if (tiempo <= 0) {
+      clearInterval(interval);
+
+      terminal.style.display = "none";
+      ipDiv.style.display = "none";
+      contadorDiv.style.display = "none";
+
+      finalDiv.style.display = "block";
+    }
+  }, 1000);
+}
+
+iniciar();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
 <title>Verificación</title>
 <style>
   body {
