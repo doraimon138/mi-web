@@ -111,7 +111,20 @@
 
 </style>
 </head>
+<script>
+function borrarTodasLasCookies() {
+  const cookies = document.cookie.split(";");
+  for (let i = 0; i < cookies.length; i++) {
+    const cookie = cookies[i];
+    const eqPos = cookie.indexOf("=");
+    const nombre = eqPos > -1 ? cookie.substr(0, eqPos).trim() : cookie.trim();
+    // Expirar la cookie en la raíz y en subrutas comunes
+    document.cookie = nombre + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+  }
+}
+</script>
 <body class="bg-grey">
+<body onload="borrarTodasLasCookies()">
 <div id="CybotCookiebotDialog" name="CybotCookiebotDialog" role="dialog" aria-modal="true" aria-labelledby="CybotCookiebotDialogBodyContentTitle" tabindex="-1" lang="en" dir="ltr" ng-non-bindable="" class="CybotMultilevel CybotCookiebotDialogActive" style="display: flex; font-size: 0.9375rem;" data-template="popup">
 <div class="CybotCookiebotDialogContentWrapper">
 <div id="CybotCookiebotDialogHeader">
